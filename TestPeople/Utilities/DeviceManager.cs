@@ -1,7 +1,7 @@
-﻿using Contracts.Interfaces;
+﻿using System.Threading.Tasks;
 using Plugin.Connectivity;
-using System.Threading.Tasks;
-using Utilities.Resources;
+using TestPeople.Logic.Business.Contracts;
+using TestPeople.Logic.Resources;
 
 namespace TestPeople.Utilities
 {
@@ -20,10 +20,6 @@ namespace TestPeople.Utilities
 
                 return instance;
             }
-        }
-
-        public DeviceManager()
-        {
         }
 
         public async Task<bool> IsNetworkAvailableAsync()

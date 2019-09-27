@@ -77,6 +77,11 @@
             android:layout_gravity="right"
             tool:ignore="RtlHardcoded">
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
             <Button
                 android:id="@+id/btn_view_post"
                 android:layout_width="wrap_content"
@@ -84,6 +89,17 @@
                 android:background="@android:color/transparent"
                 android:text="@string/btn_view_posts"
                 android:textColor="@color/colorPrimary" />
+
+             <Button
+                android:id="@+id/btn_view_book"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:text="@string/btn_view_books"
+                android:textColor="@color/colorPrimary"
+                android:layout_marginTop="10px"/>
+                </LinearLayout>
+
 
         </RelativeLayout>
 

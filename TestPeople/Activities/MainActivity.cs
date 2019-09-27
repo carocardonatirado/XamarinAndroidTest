@@ -1,50 +1,70 @@
-﻿using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Support.V7.Widget;
-using Android.Text;
-using Android.Widget;
-using DataAgent.DataBase;
-using DataAgent.Services;
-using Entities.Business;
-using Entities.Response;
-using Models;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TestPeople.Android.Adapters;
+using System.Threading.Tasks;
+using Android.App;
+using Android.Content;
+using Android.Content.PM;
+using Android.OS;
+using Android.Support.V7.Widget;
+using Android.Views;
+using Android.Widget;
+using Com.Lilarcor.Cheeseknife;
+using DTestPeople.Logic.Repositories.Remote;
+using Newtonsoft.Json;
+using TestPeople.Adapters;
 using TestPeople.Interfaces;
+using TestPeople.Logic.Business.Dtos;
+using TestPeople.Logic.Business.Managers;
+using TestPeople.Logic.Repositories.Local;
 using TestPeople.Utilities;
 
-namespace TestPeople
+namespace TestPeople.Activities
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true, ScreenOrientation = ScreenOrientation.Portrait)]
 
     public class MainActivity : BaseActivity, IPeople
     {
+        [InjectView(Resource.Id.editTextSearch)]
         private EditText EditTextSearch;
+
+        [InjectView(Resource.Id.recyclerViewSearchResults)]
         private RecyclerView recyclerViewSearchResults;
+
+        [InjectView(Resource.Id.progressDialog)]
+        public ProgressBar progressDialog;
+
+        [InjectView(Resource.Id.content)]
+        public RelativeLayout content;
+
         private PeopleAdapter _PeopleAdapter;
-        private PeopleModel _PeopleModel;
-        private IList<Person> people;
+        private PeopleManager _PeopleModel;
+        private IList<People> people;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
-            _PeopleModel = new PeopleModel(new PeopleService(DeviceManager.Instance), new DocumentsDataBase());
-            EditTextSearch = FindViewById<EditText>(Resource.Id.editTextSearch);
-            EditTextSearch.TextChanged += InputSearchOnTextChanged;
-            recyclerViewSearchResults = FindViewById<RecyclerView>(Resource.Id.recyclerViewSearchResults);
-            GetPeopleAsync();
+            Cheeseknife.Inject(this);
+            //InitToolbar();
+
+            _PeopleModel = new PeopleManager(new PeopleService(DeviceManager.Instance), new DocumentsDataBase());
+
+            //progressDialog = FindViewById<ProgressBar>(Resource.Id.progressDialog);
+            //EditTextSearch = FindViewById<EditText>(Resource.Id.editTextSearch);
+            //recyclerViewSearchResults = FindViewById<RecyclerView>(Resource.Id.recyclerViewSearchResults);
+            //EditTextSearch.TextChanged += InputSearchOnTextChanged;
+
+            this.RunOnUiThread(async () =>
+            {
+                await GetPeopleAsync();
+            });
         }
 
-        public async void GetPeopleAsync()
+        public async Task GetPeopleAsync()
         {
             try
             {
-                ProgressDialog.Show();
                 PeopleResponse _PeopleResponse = await _PeopleModel.GetPeople();
 
                 if (_PeopleResponse != null && _PeopleResponse.People != null && _PeopleResponse.People.Any())
@@ -53,10 +73,12 @@ namespace TestPeople
                     DrawPeople();
                 }
 
-                ProgressDialog.Dismiss();
+                progressDialog.Visibility = ViewStates.Gone;
+                content.Visibility = ViewStates.Visible;
             }
             catch (Exception exeption)
             {
+                Console.Write($"GetPeopleAsync: {exeption}");
             }
         }
 
@@ -69,24 +91,40 @@ namespace TestPeople
             recyclerViewSearchResults.SetAdapter(_PeopleAdapter);
         }
 
-        public void OnItemSelected(Person person)
+        public void OnItemSelected(People person, int action)
         {
-            Intent intent = new Intent(this, typeof(PostActivity));
-            intent.PutExtra("person", JsonConvert.SerializeObject(person));
-            StartActivity(intent);
+            Intent intent;
+
+
+            switch (action)
+            {
+                case (int)NavigationAction.ShowPeople:
+                    intent = new Intent(this, typeof(PostActivity));
+                    intent.PutExtra("person", JsonConvert.SerializeObject(person));
+                    StartActivity(intent);
+                    break;
+                case (int)NavigationAction.ShowBooks:
+                    intent = new Intent(this, typeof(BookActivity));
+                    StartActivity(intent);
+                    break;
+                default:
+                   
+                    break;
+            }
         }
 
-        private void InputSearchOnTextChanged(object sender, TextChangedEventArgs args)
+        [InjectOnTextChanged(Resource.Id.editTextSearch)]
+        private void InputSearchOnTextChanged(object sender, Android.Text.TextChangedEventArgs e)
         {
             if (people != null && people.Any())
             {
-                string filter = args.Text.ToString();
+                string filter = EditTextSearch.Text.Trim();
 
-                IList<Person> newListPerson = new List<Person>();
+                IList<People> newListPerson = new List<People>();
 
                 if (filter != null)
                 {
-                    foreach (Person person in people)
+                    foreach (People person in people)
                     {
                         if (person.Name.ToUpper().Contains(filter.ToUpper()))
                         {

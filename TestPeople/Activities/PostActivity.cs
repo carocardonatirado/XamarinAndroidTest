@@ -1,54 +1,66 @@
-﻿using Android.App;
-using Android.OS;
-using Android.Support.V7.Widget;
-using Android.Widget;
-using DataAgent.Services;
-using Entities.Business;
-using Entities.Response;
-using Models;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TestPeople.Android.Adapters;
+using Android.App;
+using Android.Content.PM;
+using Android.OS;
+using Android.Support.V7.Widget;
+using Android.Widget;
+using Com.Lilarcor.Cheeseknife;
+using Newtonsoft.Json;
+using TestPeople.Adapters;
+using TestPeople.Logic.Business.Dtos;
+using TestPeople.Logic.Business.Managers;
+using TestPeople.Logic.Repositories.Remote.Base;
 using TestPeople.Utilities;
 
-namespace TestPeople
+namespace TestPeople.Activities
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = false)]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", ScreenOrientation = ScreenOrientation.Portrait)]
 
     public class PostActivity : BaseActivity
     {
+        [InjectView(Resource.Id.contentUserInfo)]
         private CardView CardcontentUserInfo;
+
+        [InjectView(Resource.Id.contentCard)]
         private LinearLayout LyContentCard;
+
+        [InjectView(Resource.Id.name)]
         private TextView TvName;
+
+        [InjectView(Resource.Id.contentPhone)]
         private LinearLayout LyContentPhone;
+
+        [InjectView(Resource.Id.imagePhone)]
         private ImageView ImagePhone;
+
+        [InjectView(Resource.Id.phone)]
         private TextView TvPhone;
+
+        [InjectView(Resource.Id.contentEmail)]
         private LinearLayout LyContentEmail;
+
+        [InjectView(Resource.Id.email)]
         private TextView TvEmail;
+
+        [InjectView(Resource.Id.titlePosts)]
         private TextView TvTitlePosts;
+
+        [InjectView(Resource.Id.recyclerViewPostsResults)]
         private RecyclerView recyclerViewPostsResults;
+
         private PostAdapter _PostAdapter;
-        private Person _Person;
-        private PostModel _PostsModel;
+        private People _Person;
+        private PostManager _PostsManager;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            _PostsModel = new PostModel(new PostService(DeviceManager.Instance));
             SetContentView(Resource.Layout.activity_post);
-            CardcontentUserInfo = FindViewById<CardView>(Resource.Id.contentUserInfo);
-            LyContentCard = FindViewById<LinearLayout>(Resource.Id.contentCard);
-            TvName = FindViewById<TextView>(Resource.Id.name);
-            LyContentPhone = FindViewById<LinearLayout>(Resource.Id.contentPhone);
-            ImagePhone = FindViewById<ImageView>(Resource.Id.imagePhone);
-            TvPhone = FindViewById<TextView>(Resource.Id.phone);
-            LyContentEmail = FindViewById<LinearLayout>(Resource.Id.contentEmail);
-            TvEmail = FindViewById<TextView>(Resource.Id.email);
-            TvTitlePosts = FindViewById<TextView>(Resource.Id.titlePosts);
-            recyclerViewPostsResults = FindViewById<RecyclerView>(Resource.Id.recyclerViewPostsResults);
+            Cheeseknife.Inject(this);
+            _PostsManager = new PostManager(new PostService(DeviceManager.Instance));
 
             Bundle bundle = Intent.Extras;
 
@@ -56,8 +68,8 @@ namespace TestPeople
             {
                 if (!string.IsNullOrEmpty(Intent.Extras.GetString("person")))
                 {
-                    ProgressDialog.Show();
-                    _Person = JsonConvert.DeserializeObject<Person>(Intent.Extras.GetString("person"));
+                   
+                    _Person = JsonConvert.DeserializeObject<People>(Intent.Extras.GetString("person"));
                     TvName.Text = _Person.Name;
                     TvPhone.Text = _Person.Phone;
                     TvEmail.Text = _Person.Email;
@@ -79,25 +91,20 @@ namespace TestPeople
             recyclerViewPostsResults.SetAdapter(_PostAdapter);
         }
 
-        public void OnItemSelected(Post people)
-        {
-        }
-
         public async Task GetPostsAsync()
         {
             try
             {
-                PostsResponse _postsResponse = await _PostsModel.GetPosts(_Person.Id);
+                PostsResponse _postsResponse = await _PostsManager.GetPosts(_Person.Id);
 
                 if (_postsResponse != null && _postsResponse.Posts != null && _postsResponse.Posts.Any())
                 {                   
                     DrawPosts(_postsResponse.Posts);                   
                 }
-
-                ProgressDialog.Dismiss();
             }
-            catch (Exception exeption)
+            catch (Exception exception)
             {
+                Console.Write($" : {exception}");
             }
         }
     }

@@ -1,12 +1,12 @@
-﻿using Android.Content;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Android.Content;
 using Android.Support.V7.Widget;
 using Android.Views;
-using Entities.Business;
-using System.Collections.Generic;
-using System.Linq;
-using TestPeople.Android.ViewHolders;
+using TestPeople.ViewHolders;
+using TestPeople.Logic.Business.Dtos;
 
-namespace TestPeople.Android.Adapters
+namespace TestPeople.Adapters
 {
     public class PostAdapter : RecyclerView.Adapter
     {

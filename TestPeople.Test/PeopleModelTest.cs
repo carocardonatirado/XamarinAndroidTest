@@ -1,13 +1,10 @@
-﻿using Contracts.Interfaces;
-using Entities.Business;
-using Entities.Response;
-using Models;
-using Moq;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Moq;
+using TestPeople.Logic.Business.Contracts;
+using TestPeople.Logic.Business.Dtos;
+using TestPeople.Logic.Business.Managers;
 using Xunit;
 
 namespace TestPeople.Test
@@ -17,22 +14,22 @@ namespace TestPeople.Test
         protected Mock<IPeopleService> peopleService;
         protected Mock<IDocumentsDataBase> documentsDataBase;
         protected Mock<IHttpClientService> HttpClientService;
-        protected PeopleModel model;
+        protected PeopleManager model;
 
         public PeopleModelTest()
         {
             peopleService = new Mock<IPeopleService>();
             documentsDataBase = new Mock<IDocumentsDataBase>();
             HttpClientService = new Mock<IHttpClientService>();
-            model = new PeopleModel(peopleService.Object, documentsDataBase.Object);
+            model = new PeopleManager(peopleService.Object, documentsDataBase.Object);
         }
 
         [Fact]
         public async Task GetPeopleFromTheServiceSuccessful()
         {
-            var people = new List<Person>
+            var people = new List<People>
             {
-                new Person { Id = 1, Name = "any", Email= "any@any.com" }
+                new People { Id = 1, Name = "any", Email= "any@any.com" }
             };
 
             var response = new PeopleResponse()
@@ -54,7 +51,7 @@ namespace TestPeople.Test
         {
             var response = new PeopleResponse()
             {
-                People = new List<Person>()
+                People = new List<People>()
             };
 
             peopleService.Setup(_ => _.GetPeople()).ReturnsAsync(response);

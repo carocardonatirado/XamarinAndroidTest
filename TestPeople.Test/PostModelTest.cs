@@ -1,11 +1,10 @@
-﻿using Contracts.Interfaces;
-using Entities.Business;
-using Entities.Response;
-using Models;
-using Moq;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Moq;
+using TestPeople.Logic.Business.Contracts;
+using TestPeople.Logic.Business.Dtos;
+using TestPeople.Logic.Business.Managers;
 using Xunit;
 
 namespace TestPeople.Test
@@ -14,13 +13,13 @@ namespace TestPeople.Test
     {
         protected Mock<IPostService> postService;
         protected Mock<IHttpClientService> HttpClientService;
-        protected PostModel model;
+        protected PostManager model;
 
         public PostModelTest()
         {
             postService = new Mock<IPostService>();
             HttpClientService = new Mock<IHttpClientService>();
-            model = new PostModel(postService.Object);
+            model = new PostManager(postService.Object);
         }
 
 

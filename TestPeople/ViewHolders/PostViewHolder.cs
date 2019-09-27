@@ -1,10 +1,10 @@
-﻿using Android.Support.V7.Widget;
+﻿using System.Collections.Generic;
+using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
-using Entities.Business;
-using System.Collections.Generic;
+using TestPeople.Logic.Business.Dtos;
 
-namespace TestPeople.Android.ViewHolders
+namespace TestPeople.ViewHolders
 {
     public class PostViewHolder : RecyclerView.ViewHolder
     {

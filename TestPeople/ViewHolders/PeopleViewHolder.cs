@@ -1,11 +1,12 @@
-﻿using Android.Support.V7.Widget;
+﻿using System.Collections.Generic;
+using Android.Support.V7.Widget;
 using Android.Views;
 using Android.Widget;
-using Entities.Business;
-using System.Collections.Generic;
 using TestPeople.Interfaces;
+using TestPeople.Logic.Business.Dtos;
+using TestPeople.Utilities;
 
-namespace TestPeople.Android.ViewHolders
+namespace TestPeople.ViewHolders
 {
     public class PeopleViewHolder : RecyclerView.ViewHolder
     {
@@ -18,8 +19,9 @@ namespace TestPeople.Android.ViewHolders
         public TextView TvEmail { get; private set; }
         public RelativeLayout RyContentBtnViewPost { get; private set; }
         public Button Btn_view_post { get; private set; }
+        public Button Btn_view_book { get; private set; }
 
-        public PeopleViewHolder(View itemView, IPeople item, IList<Person> listPeople) : base(itemView)
+        public PeopleViewHolder(View itemView, IPeople item, IList<People> listPeople) : base(itemView)
         {
             LyContentCard = itemView.FindViewById<LinearLayout>(Resource.Id.contentCard);
             TvName = itemView.FindViewById<TextView>(Resource.Id.name);
@@ -30,8 +32,10 @@ namespace TestPeople.Android.ViewHolders
             TvEmail = itemView.FindViewById<TextView>(Resource.Id.email);
             RyContentBtnViewPost = itemView.FindViewById<RelativeLayout>(Resource.Id.contentBtnViewPost);
             Btn_view_post = itemView.FindViewById<Button>(Resource.Id.btn_view_post);
+            Btn_view_post.Click += delegate { item.OnItemSelected(listPeople[AdapterPosition], (int)NavigationAction.ShowPeople); };
 
-            Btn_view_post.Click += delegate { item.OnItemSelected(listPeople[AdapterPosition]); };
+            Btn_view_book = itemView.FindViewById<Button>(Resource.Id.btn_view_book);
+            Btn_view_book.Click += delegate { item.OnItemSelected(listPeople[AdapterPosition], (int)NavigationAction.ShowBooks); };
         }
     }
 }
