@@ -1,0 +1,13 @@
+	.vs/TestPeople/xs/
+	DataAgent/bin/
+	DataAgent/obj/
+	TestPeople.Logic/bin/
+	TestPeople.Logic/obj/
+	TestPeople.Test/bin/
+	TestPeople.Test/obj/
+	TestPeople/.DS_Store
+	TestPeople/bin/
+	TestPeople/obj/
+	Utilities/bin/
+	Utilities/obj/
+	.DS_Store
