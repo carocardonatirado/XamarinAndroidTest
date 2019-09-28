@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="PostsEndPoint" xml:space="preserve">
-    <value>https://jsonplaceholder.typicode.com/posts?</value>
+    <value>https://jsonplaceholder.typicode.com/posts?userId=1</value>
   </data>
   <data name="ReachableUrl" xml:space="preserve">
     <value>google.com</value>
@@ -127,6 +127,6 @@
     <value>https://jsonplaceholder.typicode.com/users</value>
   </data>
   <data name="bookEndPoint" xml:space="preserve">
-    <value>https://jsonplaceholder.typicode.com/photos</value>
+    <value>https://jsonplaceholder.typicode.com/posts?userId=1</value>
   </data>
 </root>
